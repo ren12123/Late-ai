@@ -10,6 +10,7 @@ test(GET(noCookieClient.novel), async () => {
 
 test(POST(noCookieClient.novel), async () => {
   const aozoraUrl = noCookieClient.novel.$path();
+
   const res = await noCookieClient.novel.$post({ body: { aozoraUrl } });
   expect(typeof res).toEqual('string');
 });
