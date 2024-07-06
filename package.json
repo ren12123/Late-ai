@@ -15,7 +15,9 @@
     "lint": "run-p lint:*",
     "lint:client": "npm run lint:fix --prefix client",
     "lint:server": "npm run lint:fix --prefix server",
-    "start": "npm start --prefix server",
+    "start": "run-p start:*",
+    "start:client": "npm start --prefix client",
+    "start:server": "npm start --prefix server",
     "test": "run-p test:*",
     "test:client": "npm run test --prefix client",
     "test:server": "npm run test --prefix server",
@@ -30,10 +32,12 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.3",
     "eslint-config-prettier": "^9.1.0",
+    "msw": "^2.3.1",
     "notios": "^0.4.1",
     "prettier": "^3.2.5",
     "prettier-plugin-organize-imports": "^3.2.4",
     "react": "^18.3.1",
+    "server": "^1.0.39",
     "stylelint": "^16.5.0",
     "stylelint-config-recess-order": "^5.0.1",
     "stylelint-config-standard": "^36.0.0",
@@ -43,5 +47,12 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "client": "^0.0.1",
+    "openai": "^4.52.3",
+    "react-reconciler": "^0.29.2",
+    "react-use-websocket": "^4.8.1",
+    "sever": "^0.0.2"
   }
 }
