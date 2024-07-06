@@ -1,3 +1,4 @@
+import type { WORK_STATUS } from 'api/@constants';
 import type { EntityId } from './brandedId';
 
 type WorkBase = {
@@ -5,23 +6,24 @@ type WorkBase = {
   novelUrl: string;
   title: string;
   author: string;
+  contentUrl: string;
   createTime: number;
 };
 
 export type LodingWorkEntity = WorkBase & {
-  status: 'loding';
+  status: (typeof WORK_STATUS)[0];
   imageUrl: null;
   errorMsg: null;
 };
 
 export type CompletedWorkEntity = WorkBase & {
-  status: 'completed';
+  status: (typeof WORK_STATUS)[1];
   imageUrl: string;
   errorMsg: null;
 };
 
 export type FailedWorkEntity = WorkBase & {
-  status: 'failed';
+  status: (typeof WORK_STATUS)[2];
   imageUrl: null;
   errorMsg: string;
 };

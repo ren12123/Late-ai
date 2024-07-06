@@ -7,7 +7,7 @@ export type Methods = DefineMethods<{
   };
 
   post: {
-    reqBody: { novelUrl: string; title: string; author: string };
+    reqBody: { novelUrl: string };
     resBody: LodingWorkEntity;
   };
 }>;
