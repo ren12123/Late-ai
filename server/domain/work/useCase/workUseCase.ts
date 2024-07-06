@@ -1,33 +1,34 @@
-import type { LodingWorkEntity } from 'api/@types/work';
+import type { LoadingWorkEntity } from 'api/@types/work';
 import { transaction } from 'service/prismaClient';
 import { s3 } from 'service/s3Client';
-import { workEvent } from '../event/workEvent';
 import { workMethod } from '../model/workMethod';
 import { novelQuery } from '../repository/novelQuery';
 import { workCommand } from '../repository/workCommand';
 import { getContentKey, getImageKey } from '../service/getS3Key';
+import { workEvent } from './../event/workevent';
 
 export const workUseCase = {
-  create: (novelUrl: string): Promise<LodingWorkEntity> =>
+  create: (novelUrl: string): Promise<LoadingWorkEntity> =>
     transaction('RepeatableRead', async (tx) => {
       const { title, author, html } = await novelQuery.scrape(novelUrl);
-      const lodingWork = await workMethod.create({ novelUrl, title, author });
-      await workCommand.save(tx, lodingWork);
-      await s3.putText(getContentKey(lodingWork.id), html);
+      const loadingWork = await workMethod.create({ novelUrl, title, author });
 
-      workEvent.workCreated({ lodingWork, html });
-      return lodingWork;
+      await workCommand.save(tx, loadingWork);
+      await s3.putText(getContentKey(loadingWork.id), html);
+
+      workEvent.workCreated({ loadingWork, html });
+
+      return loadingWork;
     }),
-  complete: (lodingWork: LodingWorkEntity, image: Buffer): Promise<void> =>
+  complete: (loadingWork: LoadingWorkEntity, image: Buffer): Promise<void> =>
     transaction('RepeatableRead', async (tx) => {
-      const completedWork = await workMethod.complete(lodingWork);
-
+      const completedWork = await workMethod.complete(loadingWork);
       await workCommand.save(tx, completedWork);
-      await s3.putImage(getImageKey(lodingWork.id), image);
+      await s3.putImage(getImageKey(loadingWork.id), image);
     }),
-  failuer: (lodingWork: LodingWorkEntity, errorMsg: string): Promise<void> =>
+  failure: (loadingWork: LoadingWorkEntity, errorMsg: string): Promise<void> =>
     transaction('RepeatableRead', async (tx) => {
-      const failedWork = workMethod.failuer(lodingWork, errorMsg);
+      const failedWork = workMethod.failure(loadingWork, errorMsg);
       await workCommand.save(tx, failedWork);
     }),
 };

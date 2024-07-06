@@ -4,6 +4,7 @@ import helmet from '@fastify/helmet';
 import fastifyHttpProxy from '@fastify/http-proxy';
 import type { TokenOrHeader } from '@fastify/jwt';
 import fastifyJwt from '@fastify/jwt';
+import { WS_PATH } from 'api/@constants';
 import assert from 'assert';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import Fastify from 'fastify';
@@ -45,6 +46,11 @@ export const init = (): FastifyInstance => {
     replyOptions: {
       rewriteHeaders: (headers) => ({ ...headers, 'content-security-policy': undefined }),
     },
+  });
+  fastify.register(fastifyWebsocket);
+  fastify.register(async (fastify) => {
+    websocket.init(fastify);
+    fastify.get(WS_PATH, { websocket: true }, () => {});
   });
 
   server(fastify, { basePath: API_BASE_PATH });

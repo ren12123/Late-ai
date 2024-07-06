@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 import { encode } from 'iconv-lite';
 import { delay, http, HttpResponse, passthrough } from 'msw';
 import { setupServer } from 'msw/node';
-import type { ChatCompletionCreateParamsNonStreaming, ImageGenerateParams } from 'openai/resources';
+import type { ChatCompletionCreateParamsNonStreaming } from 'openai/resources';
 import { basename, join } from 'path';
 import { init } from 'service/app';
 import { OPENAI_BASE_URL, SERVER_PORT } from 'service/envValues';
@@ -16,8 +16,7 @@ import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 const mswServer = setupServer(
   http.get('https://www.aozora.gr.jp/*', async (req) => {
     const filePath = join(__dirname, 'www.aozora.gr.jp/files', basename(req.request.url));
-
-    return new Response(encode(readFileSync(filePath, 'utf8'), 'Shift_JIS'));
+    return new Response(encode(readFileSync(filePath, 'utf-8'), 'Shift_JIS'));
   }),
   http.post(`${OPENAI_BASE_URL}/chat/completions`, async (req) => {
     await delay();
@@ -25,14 +24,14 @@ const mswServer = setupServer(
     const hash = createHash('md5')
       .update(body.messages[1].content as string)
       .digest('hex');
-    const res = readFileSync(join(__dirname, 'api.openai.com/chat', `${hash}.json`), 'utf8');
-
+    const res = readFileSync(join(__dirname, 'api.openai.com/chat', `${hash}.json`), 'utf-8');
     return HttpResponse.json(JSON.parse(res));
   }),
   http.post(`${OPENAI_BASE_URL}/images/generations`, async (req) => {
-    const body = (await req.request.json()) as ImageGenerateParams;
+    await delay();
+    const body = (await req.request.json()) as { prompt: string };
     const hash = createHash('md5').update(body.prompt).digest('hex');
-    const res = readFileSync(join(__dirname, 'api.openapi.com/images', `${hash}.json`), 'utf8');
+    const res = readFileSync(join(__dirname, 'api.openai.com/images', `${hash}.json`), 'utf-8');
     return HttpResponse.json(JSON.parse(res));
   }),
   http.all('*', passthrough),

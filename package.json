@@ -51,6 +51,8 @@
   "dependencies": {
     "client": "^0.0.1",
     "openai": "^4.52.3",
+    "react-reconciler": "^0.29.2",
+    "react-use-websocket": "^4.8.1",
     "sever": "^0.0.2"
   }
 }

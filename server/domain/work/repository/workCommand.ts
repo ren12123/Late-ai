@@ -6,6 +6,7 @@ export const workCommand = {
     await tx.work.upsert({
       where: { id: work.id },
       update: { status: work.status, errorMsg: work.errorMsg },
+<<<<<<< HEAD
 
       create: {
         id: work.id,
@@ -15,6 +16,16 @@ export const workCommand = {
         title: work.title,
         errorMsg: work.errorMsg,
         createdAt: new Date(work.createTime),
+=======
+      create: {
+        id: work.id,
+        title: work.title,
+        author: work.author,
+        novelUrl: work.novelUrl,
+        status: work.status,
+        errorMsg: work.errorMsg,
+        createdAt: new Date(work.createdTime),
+>>>>>>> other-repo/develop
       },
     });
   },
